@@ -2,6 +2,11 @@ import http from 'http';
 import express, { Express } from 'express';
 import morgan from 'morgan';
 import routes from './routes/info';
+import {
+    ReasonPhrases,
+    StatusCodes,
+    getReasonPhrase,
+} from 'http-status-codes';
 
 const router: Express = express();
 
@@ -16,7 +21,7 @@ router.use((req, res, next) => {
     
     if (req.method === 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'GET');
-        return res.status(200).json({});
+        return res.status(StatusCodes.OK).json(ReasonPhrases.OK);
     }
     next();
 });
@@ -26,9 +31,8 @@ router.use('/', routes);
 
 /** Error handling */
 router.use((req, res, next) => {
-    const error = new Error('not found');
-    return res.status(404).json({
-        message: error.message
+    return res.status(StatusCodes.NOT_FOUND).json({
+        message: getReasonPhrase(StatusCodes.NOT_FOUND)
     });
 });
 
